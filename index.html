@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Kinoplex — Protótipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<div class="device">
+
+  <div class="status-bar">
+    <span>09:30 PM</span>
+    <div class="icons"></div>
+  </div>
+
+  <div class="screen" id="screen">
+
+    <!-- SPLASH -->
+    <div class="splash" id="splash">
+      <div class="wordmark"><img src="assets/images/kinoplex-logo.png" alt="Kinoplex"></div>
+      <div class="tagline">O CINEMA PARA TODOS</div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="app-header">
+      <button class="icon-btn" aria-label="Menu"></button>
+      <div class="wordmark"><img src="assets/images/kinoplex-logo.png" alt="Kinoplex"></div>
+      <a class="icon-btn" href="search.html" aria-label="Pesquisar"></a>
+    </header>
+
+    <!-- EM CARTAZ -->
+    <div class="section-title">Em Cartaz</div>
+
+    <a class="featured-card" href="movie.html?id=homem-aranha">
+      <div class="featured-poster poster-a">
+        <div class="play-badge"></div>
+      </div>
+      <div class="featured-title">Homem-Aranha: Um Novo Dia</div>
+      <div class="badge-row" id="featured-badges"></div>
+    </a>
+
+    <div class="movie-grid">
+      <a class="movie-card" href="movie.html?id=o-fim-da-rua">
+        <div class="poster poster-b"></div>
+        <div class="movie-title">O Fim da Rua</div>
+        <div class="badge-row" id="badges-fimdarua"></div>
+      </a>
+      <a class="movie-card" href="movie.html?id=acompanhamento">
+        <div class="poster poster-c"></div>
+        <div class="movie-title">Acompanhamento: Missão Adoção</div>
+        <div class="badge-row" id="badges-acompanhamento"></div>
+      </a>
+    </div>
+
+    <div style="height:24px;"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-item active"><span class="nav-icon"></span>Home</button>
+    <button class="nav-item"><span class="nav-icon"></span>Pedidos</button>
+    <button class="nav-item"><span class="nav-icon"></span>Filmes</button>
+    <button class="nav-item"><span class="nav-icon"></span>Lançamentos</button>
+    <button class="nav-item"><span class="nav-icon"></span>Perfil</button>
+  </nav>
+
+  <div class="android-bar">
+    <span class="nav-icon-back"></span>
+    <span style="width:16px;height:16px;border:2px solid currentColor;border-radius:50%;display:inline-block;"></span>
+    <span style="width:14px;height:14px;border:2px solid currentColor;border-radius:3px;display:inline-block;"></span>
+  </div>
+
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+  // Status bar icons
+  document.querySelector('.status-bar .icons').innerHTML =
+    ICONS.bluetooth + ICONS.wifi + ICONS.battery;
+
+  // K-mark removido — agora usa o logo real (assets/images/kinoplex-logo.png)
+
+  // Header icons
+  document.querySelector('[aria-label="Menu"]').innerHTML = ICONS.menu;
+  document.querySelector('[aria-label="Pesquisar"]').innerHTML = ICONS.search;
+  document.querySelector('.play-badge').innerHTML = ICONS.play;
+
+  // Bottom nav icons
+  const navIcons = [ICONS.home, ICONS.orders, ICONS.films, ICONS.launches, ICONS.profile];
+  document.querySelectorAll('.nav-item .nav-icon').forEach((el, i) => el.innerHTML = navIcons[i]);
+  document.querySelector('.nav-icon-back').innerHTML = ICONS.back;
+
+  // Badges from shared MOVIES data
+  function renderBadges(containerId, movieId) {
+    const m = MOVIES[movieId];
+    const el = document.getElementById(containerId);
+    if (!m || !el) return;
+    let html = `<span class="badge badge-rating">${m.rating}</span><span class="badge badge-genre">${m.genre}</span>`;
+    if (m.trending) html += `<span class="badge badge-trending">${ICONS.star} Em Alta</span>`;
+    el.innerHTML = html;
+  }
+  renderBadges('featured-badges', 'homem-aranha');
+  renderBadges('badges-fimdarua', 'o-fim-da-rua');
+  renderBadges('badges-acompanhamento', 'acompanhamento');
+</script>
+</body>
+</html>
