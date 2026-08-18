@@ -71,6 +71,106 @@
   const navIcons = [ICONS.home, ICONS.search, ICONS.films, ICONS.favorites, ICONS.profile];
   document.querySelectorAll('.nav-item .nav-icon').forEach((el,i) => el.innerHTML = navIcons[i]);
   document.querySelector('.nav-icon-back').innerHTML = ICONS.back;
+
+  // --- Teclado virtual (simula o teclado do celular) ---
+  const searchInput = document.querySelector('.search-field input');
+  const vkbd = document.createElement('div');
+  vkbd.className = 'vkbd';
+  vkbd.setAttribute('aria-hidden', 'true');
+  document.querySelector('.screen').after(vkbd);
+
+  const letterRows = [
+    ['q','w','e','r','t','y','u','i','o','p'],
+    ['a','s','d','f','g','h','j','k','l'],
+    ['shift','z','x','c','v','b','n','m','backspace']
+  ];
+  const numRows = [
+    ['1','2','3','4','5','6','7','8','9','0'],
+    ['-','/',':',';','(',')','$','&','@','"'],
+    ['shift','.','?','!',"'",'backspace']
+  ];
+
+  let shifted = false;
+  let numMode = false;
+
+  function buildKeys(rows) {
+    vkbd.innerHTML = '';
+    rows.forEach(row => {
+      const r = document.createElement('div');
+      r.className = 'vkbd-row';
+      row.forEach(k => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        if (k === 'shift') { b.className = 'vkbd-key vkbd-special'; b.textContent = '⇧'; b.dataset.key = 'shift'; }
+        else if (k === 'backspace') { b.className = 'vkbd-key vkbd-special'; b.textContent = '⌫'; b.dataset.key = 'backspace'; }
+        else { b.className = 'vkbd-key'; b.textContent = shifted ? k.toUpperCase() : k; b.dataset.key = k; }
+        r.appendChild(b);
+      });
+      vkbd.appendChild(r);
+    });
+    const bottom = document.createElement('div');
+    bottom.className = 'vkbd-row';
+    [
+      { key: 'mode', label: '123', cls: 'vkbd-key vkbd-special' },
+      { key: ' ', label: 'space', cls: 'vkbd-key vkbd-space' },
+      { key: 'go', label: 'Ir', cls: 'vkbd-key vkbd-go' }
+    ].forEach(cfg => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = cfg.cls;
+      b.textContent = cfg.label;
+      b.dataset.key = cfg.key;
+      bottom.appendChild(b);
+    });
+    vkbd.appendChild(bottom);
+  }
+  buildKeys(letterRows);
+
+  function showKeyboard() { vkbd.classList.add('open'); vkbd.setAttribute('aria-hidden', 'false'); }
+  function hideKeyboard() { vkbd.classList.remove('open'); vkbd.setAttribute('aria-hidden', 'true'); }
+
+  vkbd.addEventListener('mousedown', e => e.preventDefault());
+  vkbd.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b || !b.dataset.key) return;
+    const key = b.dataset.key;
+    searchInput.focus();
+    const start = searchInput.selectionStart;
+    const end = searchInput.selectionEnd;
+    if (key === 'backspace') {
+      if (start !== end) {
+        searchInput.value = searchInput.value.slice(0, start) + searchInput.value.slice(end);
+        searchInput.selectionStart = searchInput.selectionEnd = start;
+      } else if (start > 0) {
+        searchInput.value = searchInput.value.slice(0, start - 1) + searchInput.value.slice(start);
+        searchInput.selectionStart = searchInput.selectionEnd = start - 1;
+      }
+    } else if (key === 'shift') {
+      shifted = !shifted;
+      vkbd.querySelectorAll('.vkbd-key:not(.vkbd-special):not(.vkbd-space)').forEach(el => {
+        el.textContent = shifted ? el.textContent.toUpperCase() : el.textContent.toLowerCase();
+      });
+    } else if (key === 'mode') {
+      numMode = !numMode;
+      buildKeys(numMode ? numRows : letterRows);
+    } else if (key === 'go') {
+      hideKeyboard();
+    } else {
+      searchInput.value = searchInput.value.slice(0, start) + key + searchInput.value.slice(end);
+      const pos = start + key.length;
+      searchInput.selectionStart = searchInput.selectionEnd = pos;
+    }
+    searchInput.dispatchEvent(new Event('input'));
+  });
+
+  searchInput.addEventListener('focus', showKeyboard);
+  searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') hideKeyboard(); });
+  document.addEventListener('click', e => {
+    if (vkbd.classList.contains('open') && !vkbd.contains(e.target) && !searchInput.contains(e.target)) {
+      searchInput.blur();
+      hideKeyboard();
+    }
+  });
 </script>
 </body>
 </html>

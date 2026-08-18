@@ -437,3 +437,41 @@ body.search-page .bottom-nav { border-top-color: #BDBDBD; }
   color: var(--secondary-300);
 }
 .search-item-chevron svg { width: 16px; height: 16px; }
+
+/* Teclado virtual (simula o teclado do celular) */
+.vkbd {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  background: #1C1C1E;
+  padding: 8px 6px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transform: translateY(100%);
+  transition: transform .3s cubic-bezier(.16, 1, .3, 1);
+  user-select: none;
+}
+.vkbd.open { transform: translateY(0); }
+.vkbd-row { display: flex; justify-content: center; gap: 4px; }
+.vkbd-key {
+  flex: 1;
+  height: 40px;
+  border: none;
+  border-radius: 5px;
+  background: #3A3A3C;
+  color: #FFF;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+  transition: background-color .1s, transform .05s;
+}
+.vkbd-key:active { background: #545456; transform: scale(.95); }
+.vkbd-special { flex: 1.5; font-size: 13px; }
+.vkbd-space { flex: 5; }
+.vkbd-go { background: var(--primary); color: #FFF; font-weight: 700; }
+.vkbd-go:active { background: var(--primary-600); }
