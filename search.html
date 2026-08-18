@@ -8,36 +8,69 @@
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
+<body class="search-page">
 <div class="device">
   <div class="status-bar"><span>09:30 PM</span><div class="icons"></div></div>
-  <div class="screen">
-    <header class="app-header">
-      <a class="icon-btn" href="index.html" aria-label="Voltar"></a>
-      <div class="wordmark"><img src="assets/images/kinoplex-logo.png" alt="Kinoplex"></div>
-      <span class="icon-btn" aria-label="Pesquisar" style="opacity:.35;cursor:default;"></span>
-    </header>
-    <div class="stub">
-      <h2>Fluxo de busca — Parte 3</h2>
-      <p>Essa página vai mostrar a busca única com resultados agrupados por categoria (filmes, cinemas, localizações), buscas recentes e o comportamento de clique em cada tipo de resultado.</p>
-      <a class="back-link" href="index.html">← Voltar para a Home</a>
+
+  <div class="screen search-screen">
+    <div class="search-field">
+      <span class="search-field-icon"></span>
+      <input type="search" placeholder="Buscar por filme, cinema, cidade ou ator / direção" aria-label="Buscar" autocomplete="off">
     </div>
+
+    <section class="search-group">
+      <h2 class="search-group-title">Em Alta</h2>
+      <a class="search-item" href="movie.html?id=odisseia">
+        <span class="search-item-icon"></span>
+        <span class="search-item-label">Odisseia</span>
+        <span class="search-item-chevron"></span>
+      </a>
+      <a class="search-item" href="movie.html?id=homem-aranha">
+        <span class="search-item-icon"></span>
+        <span class="search-item-label">Homem-Aranha</span>
+        <span class="search-item-chevron"></span>
+      </a>
+    </section>
+
+    <section class="search-group">
+      <h2 class="search-group-title">Buscas recentes</h2>
+      <a class="search-item" href="movie.html?id=odisseia">
+        <span class="search-item-icon"></span>
+        <span class="search-item-label">Odisseia</span>
+        <span class="search-item-chevron"></span>
+      </a>
+      <a class="search-item" href="#">
+        <span class="search-item-icon pin"></span>
+        <span class="search-item-label">Kinoplex Tijuca</span>
+        <span class="search-item-chevron"></span>
+      </a>
+    </section>
   </div>
+
   <nav class="bottom-nav">
     <a class="nav-item" href="index.html"><span class="nav-icon"></span>Home</a>
-    <button class="nav-item"><span class="nav-icon"></span>Pedidos</button>
+    <button class="nav-item active"><span class="nav-icon"></span>Pesquisa</button>
     <button class="nav-item"><span class="nav-icon"></span>Filmes</button>
-    <button class="nav-item"><span class="nav-icon"></span>Lançamentos</button>
+    <button class="nav-item"><span class="nav-icon"></span>Favoritos</button>
     <button class="nav-item"><span class="nav-icon"></span>Perfil</button>
   </nav>
+
+  <div class="android-bar">
+    <span class="nav-icon-back"></span>
+    <span style="width:16px;height:16px;border:2px solid currentColor;border-radius:50%;display:inline-block;"></span>
+    <span style="width:14px;height:14px;border:2px solid currentColor;border-radius:3px;display:inline-block;"></span>
+  </div>
 </div>
 <script src="assets/app.js"></script>
 <script>
   document.querySelector('.status-bar .icons').innerHTML = ICONS.bluetooth + ICONS.wifi + ICONS.battery;
-  document.querySelector('[aria-label="Voltar"]').innerHTML = ICONS.back;
-  document.querySelector('[aria-label="Pesquisar"]').innerHTML = ICONS.search;
-  const navIcons = [ICONS.home, ICONS.orders, ICONS.films, ICONS.launches, ICONS.profile];
+  document.querySelector('.search-field-icon').innerHTML = ICONS.search;
+  document.querySelectorAll('.search-item-icon:not(.pin)').forEach(el => el.innerHTML = ICONS.films);
+  document.querySelector('.search-item-icon.pin').innerHTML = ICONS.pin;
+  document.querySelectorAll('.search-item-chevron').forEach(el => el.innerHTML = ICONS.chevron);
+  const navIcons = [ICONS.home, ICONS.search, ICONS.films, ICONS.favorites, ICONS.profile];
   document.querySelectorAll('.nav-item .nav-icon').forEach((el,i) => el.innerHTML = navIcons[i]);
+  document.querySelector('.nav-icon-back').innerHTML = ICONS.back;
 </script>
 </body>
 </html>
