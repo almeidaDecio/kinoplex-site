@@ -70,6 +70,11 @@ const ICONS = {
 function initSplash() {
   const splash = document.getElementById("splash");
   if (!splash) return;
+  if (sessionStorage.getItem("kinoplexSplashSeen")) {
+    splash.remove();
+    return;
+  }
+  sessionStorage.setItem("kinoplexSplashSeen", "1");
   setTimeout(() => splash.classList.add("fade-out"), 1300);
 }
 
