@@ -99,7 +99,8 @@
     const m = MOVIES[movieId];
     const el = document.getElementById(containerId);
     if (!m || !el) return;
-    let html = `<span class="badge badge-rating">${m.rating}</span><span class="badge badge-genre">${m.genre}</span>`;
+    const ratingClass = { "L": "livre", "10": "s10", "12": "s12", "14": "s14", "16": "s16", "18": "s18" }[m.rating] || "";
+    let html = `<span class="badge badge-rating ${ratingClass}">${m.rating}</span><span class="badge badge-genre">${m.genre}</span>`;
     if (m.trending) html += `<span class="badge badge-trending">${ICONS.star} Em Alta</span>`;
     el.innerHTML = html;
   }
