@@ -536,3 +536,201 @@ body.search-page .bottom-nav { border-top-color: #BDBDBD; }
 }
 .search-result-chevron svg { width: 16px; height: 16px; }
 .search-result-card--theater { padding-top: 18px; padding-bottom: 18px; }
+
+/* ============================================================
+   MOVIE PAGE (movie.html)
+   ============================================================ */
+.movie-screen {
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.movie-screen > * { flex-shrink: 0; }
+
+/* Ficha do filme */
+.movie-ficha {
+  display: flex;
+  gap: 15px;
+  background: var(--bg-surface);
+  border-radius: 8px;
+  padding: 16px;
+  align-items: stretch;
+}
+.movie-ficha-poster {
+  width: 81px;
+  height: 100px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+}
+.movie-ficha-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.movie-ficha-title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.movie-ficha-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.movie-ficha-badges .badge { font-size: 14px; padding: 4px 12px; }
+
+.synopsis-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  margin-top: auto;
+  align-self: flex-start;
+}
+.synopsis-chevron {
+  display: flex;
+  color: var(--text-primary);
+  transition: transform .2s ease;
+  transform: rotate(90deg);
+}
+.synopsis-chevron svg { width: 16px; height: 16px; }
+.synopsis-toggle.open .synopsis-chevron { transform: rotate(-90deg); }
+.synopsis {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+/* Dropdown de cinema */
+.cinema-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface-elevated);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+}
+.cinema-select-icon { display: flex; flex-shrink: 0; color: var(--text-muted); }
+.cinema-select-icon svg { width: 16px; height: 16px; }
+.cinema-select select {
+  flex: 1;
+  min-width: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.cinema-select-chevron {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.cinema-select-chevron svg { width: 16px; height: 16px; transform: rotate(90deg); }
+
+/* Dias */
+.day-tabs { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; }
+.day-tabs::-webkit-scrollbar { display: none; }
+.day-tab {
+  width: 80px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  background: var(--bg-surface-elevated);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+.day-tab-top { font-size: 14px; font-weight: 400; }
+.day-tab-bottom { font-size: 16px; font-weight: 700; }
+.day-tab.active { background: var(--primary); color: #FFF; }
+
+/* Filtros (Dublado / Legendado / IMAX / 3D) */
+.filter-chips { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; }
+.filter-chips::-webkit-scrollbar { display: none; }
+.filter-chip {
+  padding: 8px 16px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+.filter-chip.active {
+  color: var(--primary);
+  border-color: var(--primary);
+  font-weight: 700;
+}
+
+/* Sessões */
+.sessions-title { font-size: 18px; font-weight: 600; }
+.session-cards { display: flex; flex-direction: column; gap: 16px; }
+.session-card {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--secondary-600);
+  border-radius: 8px;
+  padding: 8px 0;
+}
+.session-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+.session-card-name { font-size: 16px; font-weight: 700; }
+.session-card-dist { font-size: 12px; font-weight: 400; color: var(--text-secondary); }
+.session-card-divider { height: 1px; background: var(--secondary-600); margin: 8px 0; }
+.session-row { padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
+.session-row-info { display: flex; align-items: center; gap: 8px; }
+.session-room { font-size: 14px; color: var(--text-secondary); }
+.session-type { font-size: 14px; color: var(--text-secondary); }
+.session-format {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.session-times { display: flex; gap: 16px; flex-wrap: wrap; }
+.session-time {
+  width: 80px;
+  padding: 8px;
+  background: var(--bg-surface);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.session-time-h { font-size: 16px; font-weight: 700; }
+.session-time-p { font-size: 12px; color: var(--text-secondary); }
+.empty-sessions { color: var(--text-secondary); font-size: 13px; }

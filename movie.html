@@ -11,33 +11,217 @@
 <body>
 <div class="device">
   <div class="status-bar"><span>09:30 PM</span><div class="icons"></div></div>
-  <div class="screen">
+
+  <div class="screen movie-screen">
     <header class="app-header">
       <a class="icon-btn" href="index.html" aria-label="Voltar"></a>
       <div class="wordmark"><img src="assets/images/kinoplex-logo.png" alt="Kinoplex"></div>
       <a class="icon-btn" href="search.html" aria-label="Pesquisar"></a>
     </header>
-    <div class="stub">
-      <h2>Fluxo do filme — Parte 2</h2>
-      <p>Essa página vai mostrar a jornada completa: informações do filme, seleção de cinema, data e sessões, mantendo o filme como contexto o tempo todo.</p>
-      <a class="back-link" href="index.html">← Voltar para a Home</a>
+
+    <!-- FICHA DO FILME -->
+    <div class="movie-ficha">
+      <div class="movie-ficha-poster" id="fichaPoster"></div>
+      <div class="movie-ficha-body">
+        <h1 class="movie-ficha-title" id="fichaTitle"></h1>
+        <div class="movie-ficha-badges" id="fichaBadges"></div>
+        <button class="synopsis-toggle" id="synopsisToggle">
+          <span>Ver Sinopse</span><span class="synopsis-chevron"></span>
+        </button>
+        <p class="synopsis" id="synopsis" hidden></p>
+      </div>
     </div>
+
+    <!-- CINEMA -->
+    <div class="cinema-select">
+      <span class="cinema-select-icon"></span>
+      <select id="cinemaSelect" aria-label="Escolher cinema"></select>
+      <span class="cinema-select-chevron"></span>
+    </div>
+
+    <!-- DIAS -->
+    <div class="day-tabs" id="dayTabs"></div>
+
+    <!-- FILTROS -->
+    <div class="filter-chips" id="filterChips"></div>
+
+    <!-- SESSÕES -->
+    <div class="sessions-title" id="sessionsTitle">Sessões disponíveis (Hoje)</div>
+    <div class="session-cards" id="sessionCards"></div>
   </div>
+
   <nav class="bottom-nav">
     <a class="nav-item" href="index.html"><span class="nav-icon"></span>Home</a>
-    <button class="nav-item"><span class="nav-icon"></span>Pedidos</button>
-    <button class="nav-item"><span class="nav-icon"></span>Filmes</button>
-    <button class="nav-item"><span class="nav-icon"></span>Lançamentos</button>
+    <a class="nav-item" href="search.html"><span class="nav-icon"></span>Pesquisa</a>
+    <button class="nav-item active"><span class="nav-icon"></span>Filmes</button>
+    <button class="nav-item"><span class="nav-icon"></span>Favoritos</button>
     <button class="nav-item"><span class="nav-icon"></span>Perfil</button>
   </nav>
+
+  <div class="android-bar">
+    <span class="nav-icon-back"></span>
+    <span style="width:16px;height:16px;border:2px solid currentColor;border-radius:50%;display:inline-block;"></span>
+    <span style="width:14px;height:14px;border:2px solid currentColor;border-radius:3px;display:inline-block;"></span>
+  </div>
 </div>
 <script src="assets/app.js"></script>
 <script>
   document.querySelector('.status-bar .icons').innerHTML = ICONS.bluetooth + ICONS.wifi + ICONS.battery;
   document.querySelector('[aria-label="Voltar"]').innerHTML = ICONS.back;
   document.querySelector('[aria-label="Pesquisar"]').innerHTML = ICONS.search;
-  const navIcons = [ICONS.home, ICONS.orders, ICONS.films, ICONS.launches, ICONS.profile];
+  const navIcons = [ICONS.home, ICONS.search, ICONS.films, ICONS.favorites, ICONS.profile];
   document.querySelectorAll('.nav-item .nav-icon').forEach((el,i) => el.innerHTML = navIcons[i]);
+  document.querySelector('.cinema-select-icon').innerHTML = ICONS.pin;
+  document.querySelector('.cinema-select-chevron').innerHTML = ICONS.chevron;
+
+  // ---- Filme (lido da URL) ----
+  const movieId = new URLSearchParams(location.search).get('id') || 'homem-aranha';
+  const movie = MOVIES[movieId] || MOVIES['homem-aranha'];
+  document.title = 'Kinoplex — ' + movie.title;
+
+  document.getElementById('fichaPoster').classList.add(movie.posterClass);
+  document.getElementById('fichaTitle').textContent = movie.title;
+  const ratingClass = { "L":"livre", "10":"s10", "12":"s12", "14":"s14", "16":"s16", "18":"s18" }[movie.rating] || "";
+  document.getElementById('fichaBadges').innerHTML =
+    '<span class="badge badge-rating ' + ratingClass + '">' + movie.rating + '</span>' +
+    '<span class="badge badge-genre">' + movie.genre + '</span>' +
+    '<span class="badge badge-genre">' + movie.runtime + '</span>';
+  document.getElementById('synopsis').textContent = movie.synopsis;
+
+  // Sinopse (expandir/recolher)
+  document.querySelector('.synopsis-chevron').innerHTML = ICONS.chevron;
+  document.getElementById('synopsisToggle').addEventListener('click', () => {
+    const synopsis = document.getElementById('synopsis');
+    const open = synopsis.hidden;
+    synopsis.hidden = !open;
+    document.getElementById('synopsisToggle').classList.toggle('open', open);
+  });
+
+  // ---- Cinemas (dropdown) ----
+  const cinemaSelect = document.getElementById('cinemaSelect');
+  THEATERS.forEach(t => {
+    const o = document.createElement('option');
+    o.value = t.id;
+    o.textContent = t.name;
+    cinemaSelect.appendChild(o);
+  });
+  cinemaSelect.value = 'tijuca';
+  let cinemaFilterApplied = false;
+  cinemaSelect.addEventListener('change', () => {
+    cinemaFilterApplied = true;
+    renderSessions();
+  });
+
+  // ---- Dias ----
+  const DAYS = 5;
+  const MONTHS = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const WEEKDAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  function dayLabel(offset) {
+    const d = new Date();
+    d.setDate(d.getDate() + offset);
+    const date = d.getDate() + ' ' + MONTHS[d.getMonth()];
+    if (offset === 0) return { top: 'Hoje', date: date };
+    if (offset === 1) return { top: 'Amanhã', date: date };
+    return { top: WEEKDAYS[d.getDay()], date: date };
+  }
+  let activeDay = 0;
+  const dayTabs = document.getElementById('dayTabs');
+  function renderDayTabs() {
+    dayTabs.innerHTML = '';
+    for (let i = 0; i < DAYS; i++) {
+      const l = dayLabel(i);
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'day-tab' + (i === activeDay ? ' active' : '');
+      b.innerHTML = '<span class="day-tab-top">' + l.top + '</span><span class="day-tab-bottom">' + l.date + '</span>';
+      b.addEventListener('click', () => {
+        activeDay = i;
+        renderDayTabs();
+        updateSessionsTitle();
+        renderSessions();
+      });
+      dayTabs.appendChild(b);
+    }
+  }
+
+  // ---- Filtros (Dublado / Legendado / IMAX / 3D) ----
+  const FILTERS = ['Todos', 'Dublado', 'Legendado', 'IMAX', '3D'];
+  let activeFilter = 'Todos';
+  const filterChips = document.getElementById('filterChips');
+  function renderFilterChips() {
+    filterChips.innerHTML = '';
+    FILTERS.forEach(f => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'filter-chip' + (f === activeFilter ? ' active' : '');
+      b.textContent = f;
+      b.addEventListener('click', () => {
+        activeFilter = f;
+        renderFilterChips();
+        renderSessions();
+      });
+      filterChips.appendChild(b);
+    });
+  }
+
+  // ---- Sessões ----
+  const sessionCards = document.getElementById('sessionCards');
+  function updateSessionsTitle() {
+    document.getElementById('sessionsTitle').textContent = 'Sessões disponíveis (' + dayLabel(activeDay).top + ')';
+  }
+  function renderSessions() {
+    let list = (SESSIONS[movieId] || []).filter(s => s.day === activeDay);
+    if (activeFilter === 'Dublado') list = list.filter(s => s.type === 'Dublado');
+    else if (activeFilter === 'Legendado') list = list.filter(s => s.type === 'Legendado');
+    else if (activeFilter === 'IMAX') list = list.filter(s => s.format === 'IMAX');
+    else if (activeFilter === '3D') list = list.filter(s => s.format === '3D');
+    if (cinemaFilterApplied) list = list.filter(s => s.theater === cinemaSelect.value);
+
+    const byTheater = new Map();
+    list.forEach(s => {
+      if (!byTheater.has(s.theater)) byTheater.set(s.theater, []);
+      byTheater.get(s.theater).push(s);
+    });
+
+    sessionCards.innerHTML = '';
+    if (byTheater.size === 0) {
+      const p = document.createElement('p');
+      p.className = 'empty-sessions';
+      p.textContent = 'Nenhuma sessão disponível para esses filtros.';
+      sessionCards.appendChild(p);
+      return;
+    }
+    byTheater.forEach((sessions, theaterId) => {
+      const theater = THEATERS.find(t => t.id === theaterId);
+      if (!theater) return;
+      const card = document.createElement('div');
+      card.className = 'session-card';
+      let html = '<div class="session-card-head">' +
+        '<span class="session-card-name">' + theater.name + '</span>' +
+        '<span class="session-card-dist">' + theater.dist + '</span>' +
+        '</div>';
+      sessions.forEach((s, idx) => {
+        html += '<div class="session-card-divider"></div>' +
+          '<div class="session-row">' +
+            '<div class="session-row-info">' +
+              '<span class="session-room">' + s.room + '</span>' +
+              '<span class="session-type">' + s.type + '</span>' +
+              '<span class="session-format">' + s.format + '</span>' +
+            '</div>' +
+            '<div class="session-times">' +
+              s.times.map(t => '<div class="session-time"><span class="session-time-h">' + t[0] + '</span><span class="session-time-p">' + t[1] + '</span></div>').join('') +
+            '</div>' +
+          '</div>';
+      });
+      card.innerHTML = html;
+      sessionCards.appendChild(card);
+    });
+  }
+
+  renderDayTabs();
+  renderFilterChips();
+  updateSessionsTitle();
+  renderSessions();
 </script>
 </body>
 </html>

@@ -39,10 +39,84 @@ const MOVIES = {
 const THEATERS = [
   { id: "tijuca", name: "Kinoplex Tijuca", city: "Rio de Janeiro", dist: "2.4 km de você" },
   { id: "dom-pedro", name: "Kinoplex Dom Pedro", city: "Rio de Janeiro", dist: "4.2 km de você" },
-  { id: "rio-sul", name: "Kinoplex Rio Sul", city: "Rio de Janeiro", dist: "5.8 km de você" },
-  { id: "barra", name: "Kinoplex Barra", city: "Rio de Janeiro", dist: "9.1 km de você" },
+  { id: "rio-sul", name: "Kinoplex Rio Sul", city: "Rio de Janeiro", dist: "5.6 km de você" },
+  { id: "barra", name: "Kinoplex Barra", city: "Rio de Janeiro", dist: "4.3 km de você" },
   { id: "iguatemi", name: "Kinoplex Iguatemi", city: "São Paulo", dist: "690.1 km de você" }
 ];
+
+/* ============================================================
+   SESSIONS — pequeno banco de sessões (protótipo)
+   day: 0 = hoje, 1 = amanhã, 2..4 = próximos dias
+   type: Dublado | Legendado (idioma do áudio)
+   format: Standard | IMAX | 3D (tipo de tela)
+   times: [ [hora, preço], ... ]
+   ============================================================ */
+const SESSIONS = {
+  "homem-aranha": [
+    { day: 0, theater: "tijuca", room: "Sala 1", type: "Dublado", format: "Standard", times: [["14:00", "R$ 30,00"], ["16:30", "R$ 32,00"], ["20:00", "R$ 40,00"]] },
+    { day: 0, theater: "tijuca", room: "Sala 2", type: "Legendado", format: "IMAX", times: [["14:15", "R$ 40,00"], ["16:30", "R$ 42,00"], ["20:00", "R$ 50,00"]] },
+    { day: 0, theater: "barra", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 30,00"], ["17:30", "R$ 32,00"], ["21:00", "R$ 40,00"]] },
+    { day: 0, theater: "rio-sul", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 30,00"], ["17:30", "R$ 32,00"], ["21:00", "R$ 40,00"]] },
+    { day: 0, theater: "rio-sul", room: "Sala 2", type: "Legendado", format: "IMAX", times: [["14:15", "R$ 40,00"], ["16:30", "R$ 42,00"], ["20:00", "R$ 50,00"]] },
+
+    { day: 1, theater: "tijuca", room: "Sala 1", type: "Dublado", format: "Standard", times: [["13:30", "R$ 30,00"], ["16:00", "R$ 32,00"], ["19:00", "R$ 40,00"]] },
+    { day: 1, theater: "tijuca", room: "Sala 2", type: "Legendado", format: "IMAX", times: [["14:00", "R$ 40,00"], ["16:30", "R$ 42,00"], ["19:30", "R$ 50,00"]] },
+    { day: 1, theater: "dom-pedro", room: "Sala 1", type: "Dublado", format: "3D", times: [["15:00", "R$ 35,00"], ["17:30", "R$ 37,00"], ["20:00", "R$ 45,00"]] },
+    { day: 1, theater: "rio-sul", room: "Sala 1", type: "Dublado", format: "Standard", times: [["16:00", "R$ 30,00"], ["18:30", "R$ 32,00"], ["21:30", "R$ 40,00"]] },
+
+    { day: 2, theater: "tijuca", room: "Sala 1", type: "Dublado", format: "Standard", times: [["14:30", "R$ 30,00"], ["17:00", "R$ 32,00"], ["20:30", "R$ 40,00"]] },
+    { day: 2, theater: "barra", room: "Sala 1", type: "Legendado", format: "IMAX", times: [["15:15", "R$ 40,00"], ["18:00", "R$ 42,00"], ["21:00", "R$ 50,00"]] },
+    { day: 2, theater: "iguatemi", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 30,00"], ["17:30", "R$ 32,00"], ["20:00", "R$ 40,00"]] },
+
+    { day: 3, theater: "tijuca", room: "Sala 1", type: "Legendado", format: "IMAX", times: [["14:00", "R$ 40,00"], ["16:30", "R$ 42,00"], ["19:00", "R$ 50,00"]] },
+    { day: 3, theater: "rio-sul", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 30,00"], ["17:30", "R$ 32,00"], ["20:00", "R$ 40,00"]] },
+    { day: 3, theater: "rio-sul", room: "Sala 2", type: "Legendado", format: "IMAX", times: [["14:15", "R$ 40,00"], ["16:30", "R$ 42,00"], ["20:00", "R$ 50,00"]] },
+    { day: 3, theater: "barra", room: "Sala 1", type: "Dublado", format: "3D", times: [["16:00", "R$ 35,00"], ["18:30", "R$ 37,00"], ["21:30", "R$ 45,00"]] },
+
+    { day: 4, theater: "tijuca", room: "Sala 1", type: "Dublado", format: "Standard", times: [["13:00", "R$ 30,00"], ["15:30", "R$ 32,00"], ["18:30", "R$ 40,00"]] },
+    { day: 4, theater: "tijuca", room: "Sala 2", type: "Legendado", format: "IMAX", times: [["14:00", "R$ 40,00"], ["16:30", "R$ 42,00"], ["19:30", "R$ 50,00"]] },
+    { day: 4, theater: "dom-pedro", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:30", "R$ 30,00"], ["18:00", "R$ 32,00"], ["21:00", "R$ 40,00"]] }
+  ],
+
+  "o-fim-da-rua": [
+    { day: 0, theater: "tijuca", room: "Sala 1", type: "Legendado", format: "Standard", times: [["14:00", "R$ 30,00"], ["16:30", "R$ 32,00"], ["20:00", "R$ 40,00"]] },
+    { day: 0, theater: "rio-sul", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 30,00"], ["17:30", "R$ 32,00"], ["21:00", "R$ 40,00"]] },
+    { day: 0, theater: "barra", room: "Sala 1", type: "Legendado", format: "IMAX", times: [["15:15", "R$ 40,00"], ["18:00", "R$ 42,00"], ["21:00", "R$ 50,00"]] },
+
+    { day: 1, theater: "tijuca", room: "Sala 1", type: "Dublado", format: "Standard", times: [["13:30", "R$ 30,00"], ["16:00", "R$ 32,00"], ["19:00", "R$ 40,00"]] },
+    { day: 1, theater: "tijuca", room: "Sala 2", type: "Legendado", format: "Standard", times: [["14:00", "R$ 30,00"], ["16:30", "R$ 32,00"], ["19:30", "R$ 40,00"]] },
+    { day: 1, theater: "dom-pedro", room: "Sala 1", type: "Legendado", format: "Standard", times: [["15:30", "R$ 30,00"], ["18:00", "R$ 32,00"], ["21:00", "R$ 40,00"]] },
+
+    { day: 2, theater: "rio-sul", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 30,00"], ["17:30", "R$ 32,00"], ["20:00", "R$ 40,00"]] },
+    { day: 2, theater: "rio-sul", room: "Sala 2", type: "Legendado", format: "IMAX", times: [["14:15", "R$ 40,00"], ["16:30", "R$ 42,00"], ["20:00", "R$ 50,00"]] },
+    { day: 2, theater: "barra", room: "Sala 1", type: "Dublado", format: "Standard", times: [["16:00", "R$ 30,00"], ["18:30", "R$ 32,00"], ["21:30", "R$ 40,00"]] },
+
+    { day: 3, theater: "tijuca", room: "Sala 1", type: "Legendado", format: "IMAX", times: [["14:00", "R$ 40,00"], ["16:30", "R$ 42,00"], ["19:00", "R$ 50,00"]] },
+    { day: 3, theater: "iguatemi", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 30,00"], ["17:30", "R$ 32,00"], ["20:00", "R$ 40,00"]] },
+
+    { day: 4, theater: "barra", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 30,00"], ["17:30", "R$ 32,00"], ["21:00", "R$ 40,00"]] },
+    { day: 4, theater: "barra", room: "Sala 2", type: "Legendado", format: "IMAX", times: [["15:15", "R$ 40,00"], ["18:00", "R$ 42,00"], ["21:00", "R$ 50,00"]] },
+    { day: 4, theater: "rio-sul", room: "Sala 1", type: "Dublado", format: "Standard", times: [["16:00", "R$ 30,00"], ["18:30", "R$ 32,00"], ["21:30", "R$ 40,00"]] }
+  ],
+
+  "acompanhamento": [
+    { day: 0, theater: "tijuca", room: "Sala 1", type: "Dublado", format: "Standard", times: [["14:00", "R$ 28,00"], ["16:30", "R$ 30,00"], ["19:30", "R$ 35,00"]] },
+    { day: 0, theater: "tijuca", room: "Sala 2", type: "Dublado", format: "IMAX", times: [["14:15", "R$ 38,00"], ["16:30", "R$ 40,00"], ["19:30", "R$ 45,00"]] },
+    { day: 0, theater: "barra", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 28,00"], ["17:30", "R$ 30,00"], ["20:00", "R$ 35,00"]] },
+
+    { day: 1, theater: "rio-sul", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 28,00"], ["17:30", "R$ 30,00"], ["20:00", "R$ 35,00"]] },
+    { day: 1, theater: "tijuca", room: "Sala 1", type: "Dublado", format: "Standard", times: [["13:30", "R$ 28,00"], ["16:00", "R$ 30,00"], ["19:00", "R$ 35,00"]] },
+
+    { day: 2, theater: "barra", room: "Sala 1", type: "Dublado", format: "3D", times: [["16:00", "R$ 33,00"], ["18:30", "R$ 35,00"], ["21:00", "R$ 40,00"]] },
+    { day: 2, theater: "iguatemi", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 28,00"], ["17:30", "R$ 30,00"], ["20:00", "R$ 35,00"]] },
+
+    { day: 3, theater: "tijuca", room: "Sala 1", type: "Dublado", format: "Standard", times: [["14:00", "R$ 28,00"], ["16:30", "R$ 30,00"], ["19:30", "R$ 35,00"]] },
+    { day: 3, theater: "rio-sul", room: "Sala 1", type: "Dublado", format: "IMAX", times: [["15:15", "R$ 38,00"], ["18:00", "R$ 40,00"], ["21:00", "R$ 45,00"]] },
+
+    { day: 4, theater: "dom-pedro", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:30", "R$ 28,00"], ["18:00", "R$ 30,00"], ["21:00", "R$ 35,00"]] },
+    { day: 4, theater: "barra", room: "Sala 1", type: "Dublado", format: "Standard", times: [["15:00", "R$ 28,00"], ["17:30", "R$ 30,00"], ["20:00", "R$ 35,00"]] }
+  ]
+};
 
 /* Ícones inline reutilizados entre páginas */
 const ICONS = {
