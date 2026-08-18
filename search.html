@@ -51,6 +51,11 @@
       <h2 class="search-group-title">Filmes</h2>
       <div id="searchResultsList"></div>
     </section>
+
+    <section class="search-group search-results" id="searchCinemas" hidden>
+      <h2 class="search-group-title">Cinemas</h2>
+      <div id="searchCinemasList"></div>
+    </section>
   </div>
 
   <nav class="bottom-nav">
@@ -85,6 +90,8 @@
   const searchGroups = document.querySelectorAll('.search-group:not(.search-results)');
   const searchResults = document.getElementById('searchResults');
   const searchResultsList = document.getElementById('searchResultsList');
+  const searchCinemas = document.getElementById('searchCinemas');
+  const searchCinemasList = document.getElementById('searchCinemasList');
   const searchClear = document.getElementById('searchClear');
 
   function norm(s) {
@@ -93,27 +100,40 @@
   function renderResults(q) {
     const term = norm(q).trim();
     const hasQuery = term.length > 0;
-    if (!hasQuery) {
-      searchResultsList.innerHTML = '';
-    } else {
-      const matches = Object.keys(MOVIES).filter(id => {
-        const m = MOVIES[id];
-        return norm(m.title).includes(term) || norm(m.genre).includes(term);
-      });
-      searchResultsList.innerHTML = matches.map(id => {
-        const m = MOVIES[id];
-        return '<a class="search-result-card" href="movie.html?id=' + id + '">' +
-          '<div class="search-result-poster ' + m.posterClass + '"></div>' +
-          '<div class="search-result-info">' +
-            '<span class="search-result-title">' + m.title + '</span>' +
-            '<span class="search-result-meta">' + m.runtime + ' - ' + m.genre + '</span>' +
-          '</div>' +
-          '<span class="search-result-chevron">' + ICONS.chevron + '</span>' +
-        '</a>';
-      }).join('');
-    }
+
+    const movieMatches = hasQuery ? Object.keys(MOVIES).filter(id => {
+      const m = MOVIES[id];
+      return norm(m.title).includes(term) || norm(m.genre).includes(term);
+    }) : [];
+    const theaterMatches = hasQuery ? THEATERS.filter(t =>
+      norm(t.name).includes(term) || norm(t.city).includes(term)
+    ) : [];
+
+    searchResultsList.innerHTML = movieMatches.map(id => {
+      const m = MOVIES[id];
+      return '<a class="search-result-card" href="movie.html?id=' + id + '">' +
+        '<div class="search-result-poster ' + m.posterClass + '"></div>' +
+        '<div class="search-result-info">' +
+          '<span class="search-result-title">' + m.title + '</span>' +
+          '<span class="search-result-meta">' + m.runtime + ' - ' + m.genre + '</span>' +
+        '</div>' +
+        '<span class="search-result-chevron">' + ICONS.chevron + '</span>' +
+      '</a>';
+    }).join('');
+
+    searchCinemasList.innerHTML = theaterMatches.map(t =>
+      '<a class="search-result-card search-result-card--theater" href="#">' +
+        '<div class="search-result-info">' +
+          '<span class="search-result-title">' + t.name + '</span>' +
+          '<span class="search-result-meta">' + t.dist + '</span>' +
+        '</div>' +
+        '<span class="search-result-chevron">' + ICONS.chevron + '</span>' +
+      '</a>'
+    ).join('');
+
     searchGroups.forEach(g => g.hidden = hasQuery);
-    searchResults.hidden = !hasQuery;
+    searchResults.hidden = movieMatches.length === 0;
+    searchCinemas.hidden = theaterMatches.length === 0;
     searchClear.classList.toggle('visible', hasQuery);
   }
   searchInput.addEventListener('input', () => renderResults(searchInput.value));

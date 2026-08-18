@@ -535,3 +535,4 @@ body.search-page .bottom-nav { border-top-color: #BDBDBD; }
   color: var(--secondary-300);
 }
 .search-result-chevron svg { width: 16px; height: 16px; }
+.search-result-card--theater { padding-top: 18px; padding-bottom: 18px; }
