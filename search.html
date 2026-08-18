@@ -16,6 +16,7 @@
     <div class="search-field">
       <span class="search-field-icon"></span>
       <input type="search" placeholder="Buscar por filme, cinema, cidade ou ator / direção" aria-label="Buscar" autocomplete="off">
+      <button class="search-field-clear" id="searchClear" aria-label="Limpar busca"></button>
     </div>
 
     <section class="search-group">
@@ -45,6 +46,11 @@
         <span class="search-item-chevron"></span>
       </a>
     </section>
+
+    <section class="search-group search-results" id="searchResults" hidden>
+      <h2 class="search-group-title">Filmes</h2>
+      <div id="searchResultsList"></div>
+    </section>
   </div>
 
   <nav class="bottom-nav">
@@ -71,12 +77,56 @@
   const navIcons = [ICONS.home, ICONS.search, ICONS.films, ICONS.favorites, ICONS.profile];
   document.querySelectorAll('.nav-item .nav-icon').forEach((el,i) => el.innerHTML = navIcons[i]);
   document.querySelector('.nav-icon-back').innerHTML = ICONS.back;
+  document.querySelector('#searchClear').innerHTML = ICONS.close;
+
+  const searchInput = document.querySelector('.search-field input');
+
+  // --- Resultados de busca ---
+  const searchGroups = document.querySelectorAll('.search-group:not(.search-results)');
+  const searchResults = document.getElementById('searchResults');
+  const searchResultsList = document.getElementById('searchResultsList');
+  const searchClear = document.getElementById('searchClear');
+
+  function norm(s) {
+    return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+  function renderResults(q) {
+    const term = norm(q).trim();
+    const hasQuery = term.length > 0;
+    if (!hasQuery) {
+      searchResultsList.innerHTML = '';
+    } else {
+      const matches = Object.keys(MOVIES).filter(id => {
+        const m = MOVIES[id];
+        return norm(m.title).includes(term) || norm(m.genre).includes(term);
+      });
+      searchResultsList.innerHTML = matches.map(id => {
+        const m = MOVIES[id];
+        return '<a class="search-result-card" href="movie.html?id=' + id + '">' +
+          '<div class="search-result-poster ' + m.posterClass + '"></div>' +
+          '<div class="search-result-info">' +
+            '<span class="search-result-title">' + m.title + '</span>' +
+            '<span class="search-result-meta">' + m.runtime + ' - ' + m.genre + '</span>' +
+          '</div>' +
+          '<span class="search-result-chevron">' + ICONS.chevron + '</span>' +
+        '</a>';
+      }).join('');
+    }
+    searchGroups.forEach(g => g.hidden = hasQuery);
+    searchResults.hidden = !hasQuery;
+    searchClear.classList.toggle('visible', hasQuery);
+  }
+  searchInput.addEventListener('input', () => renderResults(searchInput.value));
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    renderResults('');
+    searchInput.focus();
+  });
 
   // --- Teclado virtual (simula o teclado do celular) ---
   // Em dispositivos touch (celular/tablet) o teclado nativo do sistema já aparece (evita teclado duplicado).
   const isTouch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
   if (!isTouch) {
-  const searchInput = document.querySelector('.search-field input');
   const vkbd = document.createElement('div');
   vkbd.className = 'vkbd';
   vkbd.setAttribute('aria-hidden', 'true');
@@ -169,7 +219,7 @@
   searchInput.addEventListener('focus', showKeyboard);
   searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') hideKeyboard(); });
   document.addEventListener('click', e => {
-    if (vkbd.classList.contains('open') && !vkbd.contains(e.target) && !searchInput.contains(e.target)) {
+    if (vkbd.classList.contains('open') && !vkbd.contains(e.target) && !searchInput.contains(e.target) && !searchClear.contains(e.target)) {
       searchInput.blur();
       hideKeyboard();
     }
