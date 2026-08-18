@@ -33,10 +33,13 @@
     </div>
 
     <!-- CINEMA -->
-    <div class="cinema-select">
-      <span class="cinema-select-icon"></span>
-      <select id="cinemaSelect" aria-label="Escolher cinema"></select>
-      <span class="cinema-select-chevron"></span>
+    <div class="cinema-select-wrap">
+      <button class="cinema-select" id="cinemaSelectBtn" aria-haspopup="listbox" aria-expanded="false">
+        <span class="cinema-select-icon"></span>
+        <span class="cinema-select-label" id="cinemaSelectLabel"></span>
+        <span class="cinema-select-chevron"></span>
+      </button>
+      <div class="cinema-dropdown" id="cinemaDropdown" hidden></div>
     </div>
 
     <!-- DIAS -->
@@ -97,19 +100,47 @@
     document.getElementById('synopsisToggle').classList.toggle('open', open);
   });
 
-  // ---- Cinemas (dropdown) ----
-  const cinemaSelect = document.getElementById('cinemaSelect');
-  THEATERS.forEach(t => {
-    const o = document.createElement('option');
-    o.value = t.id;
-    o.textContent = t.name;
-    cinemaSelect.appendChild(o);
+  // ---- Cinemas (dropdown customizado) ----
+  const cinemaBtn = document.getElementById('cinemaSelectBtn');
+  const cinemaLabel = document.getElementById('cinemaSelectLabel');
+  const cinemaDropdown = document.getElementById('cinemaDropdown');
+  let selectedCinema = 'tijuca';
+
+  function closeCinemaDropdown() {
+    cinemaDropdown.hidden = true;
+    cinemaBtn.classList.remove('open');
+    cinemaBtn.setAttribute('aria-expanded', 'false');
+  }
+  function renderCinemaDropdown() {
+    const theater = THEATERS.find(t => t.id === selectedCinema);
+    cinemaLabel.textContent = theater ? theater.name : 'Selecione o cinema';
+    cinemaDropdown.innerHTML = THEATERS.map(t =>
+      '<button type="button" class="cinema-dropdown-item' + (t.id === selectedCinema ? ' selected' : '') + '" data-id="' + t.id + '">' +
+        '<span class="cd-name">' + t.name + '</span>' +
+        '<span class="cd-dist">' + t.dist + '</span>' +
+        '<span class="cd-check">' + ICONS.check + '</span>' +
+      '</button>'
+    ).join('');
+  }
+  cinemaBtn.addEventListener('click', () => {
+    const open = cinemaDropdown.hidden;
+    renderCinemaDropdown();
+    cinemaDropdown.hidden = !open;
+    cinemaBtn.classList.toggle('open', !open);
+    cinemaBtn.setAttribute('aria-expanded', String(!open));
   });
-  cinemaSelect.value = 'tijuca';
-  let cinemaFilterApplied = false;
-  cinemaSelect.addEventListener('change', () => {
-    cinemaFilterApplied = true;
+  cinemaDropdown.addEventListener('click', e => {
+    const item = e.target.closest('.cinema-dropdown-item');
+    if (!item) return;
+    selectedCinema = item.dataset.id;
+    closeCinemaDropdown();
+    renderCinemaDropdown();
     renderSessions();
+  });
+  document.addEventListener('click', e => {
+    if (!cinemaDropdown.hidden && !e.target.closest('.cinema-select-wrap')) {
+      closeCinemaDropdown();
+    }
   });
 
   // ---- Dias ----
@@ -175,7 +206,7 @@
     else if (activeFilter === 'Legendado') list = list.filter(s => s.type === 'Legendado');
     else if (activeFilter === 'IMAX') list = list.filter(s => s.format === 'IMAX');
     else if (activeFilter === '3D') list = list.filter(s => s.format === '3D');
-    if (cinemaFilterApplied) list = list.filter(s => s.theater === cinemaSelect.value);
+    list = list.filter(s => s.theater === selectedCinema);
 
     const byTheater = new Map();
     list.forEach(s => {
@@ -218,10 +249,21 @@
     });
   }
 
+  renderCinemaDropdown();
   renderDayTabs();
   renderFilterChips();
   updateSessionsTitle();
   renderSessions();
+
+  // Scroll lateral com a roda do mouse (dias e filtros)
+  [dayTabs, filterChips].forEach(el => {
+    el.addEventListener('wheel', e => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        el.scrollLeft += e.deltaY;
+        e.preventDefault();
+      }
+    }, { passive: false });
+  });
 </script>
 </body>
 </html>
