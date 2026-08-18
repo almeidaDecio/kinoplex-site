@@ -73,6 +73,9 @@
   document.querySelector('.nav-icon-back').innerHTML = ICONS.back;
 
   // --- Teclado virtual (simula o teclado do celular) ---
+  // Em dispositivos touch (celular/tablet) o teclado nativo do sistema já aparece (evita teclado duplicado).
+  const isTouch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+  if (!isTouch) {
   const searchInput = document.querySelector('.search-field input');
   const vkbd = document.createElement('div');
   vkbd.className = 'vkbd';
@@ -171,6 +174,7 @@
       hideKeyboard();
     }
   });
+  }
 </script>
 </body>
 </html>
