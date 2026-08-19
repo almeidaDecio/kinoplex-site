@@ -695,7 +695,8 @@ body.search-page .bottom-nav { border-top-color: #BDBDBD; }
 .cinema-dropdown-item .cd-check svg { width: 16px; height: 16px; }
 
 /* Dias */
-.day-tabs { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; }
+.day-tabs { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; cursor: grab; }
+.day-tabs:active { cursor: grabbing; }
 .day-tabs::-webkit-scrollbar { display: none; }
 .day-tab {
   width: 80px;
@@ -717,7 +718,8 @@ body.search-page .bottom-nav { border-top-color: #BDBDBD; }
 .day-tab.active { background: var(--primary); color: #FFF; }
 
 /* Filtros (Dublado / Legendado / IMAX / 3D) */
-.filter-chips { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; }
+.filter-chips { display: flex; gap: 16px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; cursor: grab; }
+.filter-chips:active { cursor: grabbing; }
 .filter-chips::-webkit-scrollbar { display: none; }
 .filter-chip {
   padding: 8px 16px;
