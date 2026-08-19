@@ -549,6 +549,11 @@ body.search-page .bottom-nav { border-top-color: #BDBDBD; }
 .movie-screen > * { flex-shrink: 0; }
 
 /* Ficha do filme */
+.movie-ficha-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 .movie-ficha {
   display: flex;
   gap: 15px;
@@ -610,8 +615,10 @@ body.search-page .bottom-nav { border-top-color: #BDBDBD; }
 .synopsis-chevron svg { width: 16px; height: 16px; }
 .synopsis-toggle.open .synopsis-chevron { transform: rotate(-90deg); }
 .synopsis {
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 400;
   line-height: 1.6;
+  text-align: justify;
   color: var(--text-secondary);
 }
 
