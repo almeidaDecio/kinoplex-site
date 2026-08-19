@@ -272,13 +272,15 @@
       el.addEventListener('pointerdown', e => {
         isDown = true; moved = false;
         startX = e.clientX; startLeft = el.scrollLeft;
-        try { el.setPointerCapture(e.pointerId); } catch (err) {}
       });
       el.addEventListener('pointermove', e => {
         if (!isDown) return;
         const dx = e.clientX - startX;
-        if (Math.abs(dx) > 4) moved = true;
-        el.scrollLeft = startLeft - dx;
+        if (Math.abs(dx) > 4 && !moved) {
+          moved = true;
+          try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        }
+        if (moved) el.scrollLeft = startLeft - dx;
       });
       const up = () => { isDown = false; };
       el.addEventListener('pointerup', up);
