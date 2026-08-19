@@ -570,7 +570,7 @@ body.search-page .bottom-nav { border-top-color: #BDBDBD; }
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 .movie-ficha-title {
   font-size: 16px;
@@ -583,7 +583,9 @@ body.search-page .bottom-nav { border-top-color: #BDBDBD; }
   gap: 8px;
   flex-wrap: wrap;
 }
-.movie-ficha-badges .badge { font-size: 14px; padding: 4px 12px; }
+.movie-ficha-badges .badge { font-size: 14px; line-height: 16px; padding: 4px 12px; }
+.movie-ficha-badges .badge-rating { padding: 4px 8px; }
+.movie-ficha-badges .badge-genre { background: #E0E0E0; color: #787878; }
 
 .synopsis-toggle {
   display: flex;
